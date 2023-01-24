@@ -22,7 +22,7 @@ class GuestReqController extends Controller
      */
     public function index()
     {
-        $guestreqs = GuestReq::with('guest')->get();
+        $guestreqs = GuestReq::with('guest')->paginate(8);
         return view('guestreqs.index', compact('guestreqs'));
     }
 

@@ -30,7 +30,7 @@
                                             <td>
                                                 @if ($guestreq->status != null)
                                                     <p class="badge badge-success badge-sm"> <i
-                                                            class="mdi mdi-thumb-up-outline"></i> Done </p>
+                                                            class="mdi mdi-thumb-up-outline"></i> Confirmed </p>
                                                 @else
                                                     <p class="badge badge-warning badge-sm"> <i class="mdi mdi-timer-sand">
                                                             Waiting</i>
@@ -55,6 +55,22 @@
                                 @endif
                             </tbody>
                         </table>
+                         <!-- Pagination Start -->
+                    <div class="col-md-12">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $guestreqs->previousPageUrl() }}"
+                                        tabindex="-1">Previous</a>
+                                </li>
+                                <li class="page-item disabled"></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $guestreqs->nextPageUrl() }}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <!-- Pagination Start -->
                     </div>
                 </div>
 
