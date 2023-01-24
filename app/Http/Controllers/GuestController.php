@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guest;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class GuestController extends Controller
 {
@@ -37,9 +38,15 @@ class GuestController extends Controller
      */
     public function store(Request $request)
     {
-        Guest::create($request->all());
-        $guests = Guest::paginate(6);
-        return view('guests.index', compact('guests'));
+        $guest=Guest::create($request->all());
+        if ($guest) {
+            Alert::success('Success','Guset Infos added Successfully');
+            return redirect()->route('guests.index');
+        } else {
+            Alert::error('Error','Problem While Saving, Please Try Again');
+        }
+        
+        
     }
 
     /**
@@ -76,8 +83,13 @@ class GuestController extends Controller
         $guest = Guest::findOrFail($guest->id);
         $guest->update($request->all());
 
-        $guests = Guest::paginate(6);
-        return view('guests.index', compact('guests'));
+        if ($guest) {
+            Alert::success('Success','Guset Infos Updated Successfully');
+            return redirect()->route('guests.index');
+        } else {
+            Alert::error('Error','Problem While Saving, Please Try Again');
+        }
+
     }
 
     /**

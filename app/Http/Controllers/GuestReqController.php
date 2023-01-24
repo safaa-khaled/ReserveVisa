@@ -10,6 +10,8 @@ use App\Models\FileInfo;
 use App\Models\AccommodationInfo;
 use App\Models\CompanionInfo;
 use Illuminate\Http\Request;
+use RealRashid\SweetAlert\Facades\Alert;
+
 
 class GuestReqController extends Controller
 {
@@ -60,6 +62,7 @@ class GuestReqController extends Controller
 
         $guestReqData = [
             'mobile' => $guestreq->mobile,
+            'status' => $guestreq->status,
             'firstname' => $passportInfo->firstname,
             'lastname' => $passportInfo->lastname,
             'birthdate' => $passportInfo->birthdate,
@@ -243,11 +246,13 @@ class GuestReqController extends Controller
         $mobileNo = '+' . $countryCode . $mobile;
         $guestReq->mobile = $mobileNo;
         //$guestReq->otpcode = $request->otpCode;
-
+        
         if ($guestReq->save()) {
+            Alert::success('Success','Your Mobile Infos added Successfully');
             $guestReqId = $guestReq->id;
             return redirect()->route('guestreqs.passportInfo', ['guestReqId' => $guestReqId]);
         } else {
+            Alert::error('Error','Problem While Saving, Please Try Again');
             return redirect()->back();
         }
     }
@@ -298,12 +303,14 @@ class GuestReqController extends Controller
         $filePersonal->file = 'personalImages/' . $newPersPhoto;
 
         if (($passportInfo->save()) && ($filePassport->save()) && ($filePersonal->save())) {
+            Alert::success('Success','Your Passport Infos added Successfully');
             if ($request->withcompanion == 0) {
                 return redirect()->route('guestreqs.accommodationInfo', ['guestReqId' => $guestReqId]);
             } else {
                 return redirect()->route('guestreqs.companionInfo', ['guestReqId' => $guestReqId]);
             }
         } else {
+            Alert::error('Error','Problem While Saving, Please Try Again');
             return redirect()->back();
         }
     }
@@ -332,16 +339,18 @@ class GuestReqController extends Controller
             $accommodationExtra->roomtype = $request->roomtypeExtra;
 
             if (($accommodationInfo->save()) && ($accommodationExtra->save())) {
-
+                Alert::success('Success','Your Accommodation Infos added Successfully');
                 return redirect()->route('finalGuest');
             } else {
+                Alert::error('Error','Problem While Saving, Please Try Again');
                 return redirect()->back();
             }
         } else {
             if ($accommodationInfo->save()) {
-
+                Alert::success('Success','Your Accommodation Infos added Successfully');
                 return redirect()->route('finalGuest');
             } else {
+                Alert::error('Error','Problem While Saving, Please Try Again');
                 return redirect()->back();
             }
         }
@@ -394,9 +403,10 @@ class GuestReqController extends Controller
         $filePersonal->file = 'personalImages/' . $newPersPhoto;
 
         if (($companionInfo->save()) && ($filePassport->save()) && ($filePersonal->save())) {
-
+            Alert::success('Success','Companion Infos added Successfully');
             return redirect()->route('guestreqs.accommodationInfo', ['guestReqId' => $guestReqId]);
         } else {
+            Alert::error('Error','Problem While Saving, Please Try Again');
             return redirect()->back();
         }
     }

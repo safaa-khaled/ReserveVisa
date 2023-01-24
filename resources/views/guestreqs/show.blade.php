@@ -127,10 +127,13 @@
                         </div>
 
                         <p>&nbsp;</p>
-                        <a href="{{ route('send-guest-req-email', [$guestId]) }}" class="btn btn-success">Confirm
+                        
+                        @if ($guestReqData['status'] == null)
+                        <a href="{{ route('send-guest-req-email', [$guestReqId]) }}" class="badge badge-success badge-sm">Confirm
                             Request</a>
+                            @endif
                         @if ($guestReqData['companion'] == 1)
-                            <a href="{{ route('guestreqs.companionShow', [$guestReqId]) }}" class="btn btn-primary">View
+                            <a href="{{ route('guestreqs.companionShow', [$guestReqId]) }}" class="badge badge-primary badge-sm">View
                                 Companion Info</a>
                         @endif
                         <a href="{{ route('guestreqs.index') }}" class="btn btn-default">Back to List</a>

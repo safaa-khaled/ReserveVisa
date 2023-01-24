@@ -16,6 +16,7 @@
                                 <tr>
                                     <th>Guest Name</th>
                                     <th>Guest Email</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -27,10 +28,23 @@
                                             <td>{{ $guestreq->guest->title }} {{ $guestreq->guest->name }} </td>
                                             <td>{{ $guestreq->guest->email }} </td>
                                             <td>
+                                                @if ($guestreq->status != null)
+                                                    <p class="badge badge-success badge-sm"> <i
+                                                            class="mdi mdi-thumb-up-outline"></i> Done </p>
+                                                @else
+                                                    <p class="badge badge-warning badge-sm"> <i class="mdi mdi-timer-sand">
+                                                            Waiting</i>
+                                                    </p>
+                                                @endif
+                                            </td>
+                                            <td>
                                                 <a href="{{ route('guestreqs.show', [$guestreq->id]) }}"
-                                                    class="btn btn-sm btn-primary">View Details</a>
-                                                <a href="{{ route('send-guest-req-email', [$guestreq->guest->id]) }}"
-                                                    class="btn btn-sm btn-success">Confirm Request</a>
+                                                    class="badge badge-primary badge-sm"> View Details</a>
+                                                @if ($guestreq->status == null)
+                                                    <a href="{{ route('send-guest-req-email', [$guestreq->id]) }}"
+                                                        class="badge badge-success badge-sm">Confirm Request</a>
+                                                @endif
+
                                             </td>
                                         </tr>
                                     @endforeach

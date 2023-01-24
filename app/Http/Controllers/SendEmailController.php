@@ -11,6 +11,8 @@ use App\Mail\NotifyMail;
 use App\Mail\GuestMail;
 use App\Mail\GuestReqMail;
 use App\Models\Guest;
+use App\Models\GuestReq;
+use RealRashid\SweetAlert\Facades\Alert;
 
 
 class SendEmailController extends Controller
@@ -38,20 +40,25 @@ class SendEmailController extends Controller
       'url_a' => 'http://localhost:8000/welcomeguestreq/'.$id,
     ];
 
-    /*Mail::to($to)->send(new GuestMail($body));
+    Mail::to($to)->send(new GuestMail($body));
     if (Mail::failures()) {
-      return response()->Fail('Sorry! Please try again latter');
+      Alert::error('Error','Problem While Sending Email, Please Try Again');
+      return redirect()->back();
     } else {
-      return response()->success('Great! Successfully send in your mail');
-    }*/
+      Alert::success('Success','Email Sent Successfully');
+      return redirect()->back();
+    }
+        
 
-    return view('emails.guestMail', compact('data','body'));
+    //return view('emails.guestMail', compact('data','body'));
   }
 
-  public function guestReqMail($id)
+  public function guestReqMail($reqId)
   {
-
-    $guest = Guest::findOrFail($id);
+    $guestReq=GuestReq::findOrFail($reqId);
+    $guestReq->status=1;
+    $guestReq->save();
+    $guest = Guest::findOrFail($guestReq->guest_id);
     $data = [
       'name' => $guest->name,
       'title' => $guest->title,
@@ -64,13 +71,15 @@ class SendEmailController extends Controller
       'title' => $data['title'],
     ];
 
-   /* Mail::to($to)->send(new GuestReqMail($body));
+    Mail::to($to)->send(new GuestReqMail($body));
     if (Mail::failures()) {
-      return response()->Fail('Sorry! Please try again latter');
+      Alert::error('Error','Problem While Sending Email, Please Try Again');
+      return redirect()->back();
     } else {
-      return response()->success('Great! Successfully send in your mail');
-    }*/
+      Alert::success('Success','Request Confirmed && Email Sent Successfully');
+      return redirect()->back();
+    }
 
-    return view('emails.guestReqMail', compact('data','body'));
+    //return view('emails.guestReqMail', compact('data','body'));
   }
 }

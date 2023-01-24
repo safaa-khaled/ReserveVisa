@@ -79,7 +79,7 @@
                                                         <div class="col-sm-4">
                                                             <p class="status-summary-ight-white mb-1">
                                                                 Requests in Week</p>
-                                                            <h2 class="text-info">{{-- {{ $orderInWeek->count() }} --}}</h2>
+                                                            <h2 class="text-info"></h2>
                                                         </div>
                                                         <div class="col-sm-8">
                                                             <div class="status-summary-chart-wrapper pb-4">
@@ -127,4 +127,67 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 <script src="jquery-circle-progress/dist/circle-progress.js"></script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        /************ Weekly Confirmed requests chart********************************************/
+        var allRequestWeek = @json($allRequestWeek);
+        var doneRequestWeek = @json($doneRequestWeek);
+
+        var dataFirst = {
+            label: "All Requests",
+            data: [allRequestWeek['Monday'], allRequestWeek['Tuesday'], allRequestWeek['Wednesday'], allRequestWeek[
+                'Thursday'], allRequestWeek['Friday'], allRequestWeek['Saturday'], allRequestWeek[
+                'Sunday']],
+            backgroundColor: 'dodgerblue',
+            borderColor: 'blue',
+            borderWidth: 1
+        };
+
+        var dataSecond = {
+            label: "Confirmed Requests",
+            data: [doneRequestWeek['Monday'], doneRequestWeek['Tuesday'], doneRequestWeek['Wednesday'],
+            doneRequestWeek['Thursday'], doneRequestWeek['Friday'], doneRequestWeek['Saturday'],
+            doneRequestWeek['Sunday']
+            ],
+            backgroundColor: 'yellowgreen',
+            borderColor: 'green',
+            borderWidth: 1
+        };
+
+        var data = {
+            labels: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+            datasets: [dataFirst, dataSecond]
+        };
+        var options = {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            legend: {
+                display: true
+            },
+            elements: {
+                point: {
+                    radius: 0
+                }
+            }
+
+        };
+        if ($("#requestOverview").length) {
+            var barChartCanvas = $("#requestOverview").get(0).getContext("2d");
+            var barChart = new Chart(barChartCanvas, {
+                type: 'bar',
+                data: data,
+                options: options
+            });
+
+        }
+
+
+    });
+</script>
 

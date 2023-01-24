@@ -17,9 +17,8 @@ class CreateGuestReqsTable extends Migration
             $table->id();
             $table->integer('guest_id');
             $table->string('mobile');
-            
+            $table->tinyInteger('status')->nullable();
             $table->timestamps();
-
             $table->foreign('guest_id')->references('id')->on('guests');
         });
     }
