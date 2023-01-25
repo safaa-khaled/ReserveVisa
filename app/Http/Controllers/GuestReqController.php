@@ -124,7 +124,7 @@ class GuestReqController extends Controller
             }
         }
 
-        return view('guestreqs.show', compact('guestReqData', 'guestReqId','guestId'));
+        return view('guestreqs.show', compact('guestReqData', 'guestReqId', 'guestId'));
     }
 
     /**Companion Show */
@@ -246,13 +246,13 @@ class GuestReqController extends Controller
         $mobileNo = '+' . $countryCode . $mobile;
         $guestReq->mobile = $mobileNo;
         //$guestReq->otpcode = $request->otpCode;
-        
+
         if ($guestReq->save()) {
-            Alert::success('Success','Your Mobile Infos added Successfully');
+            Alert::success('Success', 'Your Mobile Infos added Successfully');
             $guestReqId = $guestReq->id;
             return redirect()->route('guestreqs.passportInfo', ['guestReqId' => $guestReqId]);
         } else {
-            Alert::error('Error','Problem While Saving, Please Try Again');
+            Alert::error('Error', 'Problem While Saving, Please Try Again');
             return redirect()->back();
         }
     }
@@ -266,7 +266,9 @@ class GuestReqController extends Controller
 
     public function addPassportInfo(Request $request, $guestReqId)
     {
-        $passportInfo = new PassportInfo();
+        $passportInfo = PassportInfo::where('guest_req_id', $guestReqId)->first();
+        if ($passportInfo == null)
+            $passportInfo = new PassportInfo();
         $passportInfo->guest_req_id = $guestReqId;
         $passportInfo->firstname = $request->firstname;
         $passportInfo->lastname = $request->lastname;
@@ -285,7 +287,9 @@ class GuestReqController extends Controller
         $passportInfo->visa_status = $request->visa_status;
 
         //For Passport Picture
-        $filePassport = new FileInfo();
+        $filePassport = FileInfo::where('guest_req_id', $guestReqId)->where('filetype', '=', 1)->first();
+        if ($filePassport == null)
+            $filePassport = new FileInfo();
         $filePassport->guest_req_id = $guestReqId;
         $filePassport->filetype = 1; //filetype = 1 for passport picture
         $passportPhoto = $request->passportPic;
@@ -294,7 +298,9 @@ class GuestReqController extends Controller
         $filePassport->file = 'passportImages/' . $newPassPhoto;
 
         //For Personal Picture
-        $filePersonal = new FileInfo();
+        $filePersonal = FileInfo::where('guest_req_id', $guestReqId)->where('filetype', '=', 2)->first();
+        if ($filePersonal == null)
+            $filePersonal = new FileInfo();
         $filePersonal->guest_req_id = $guestReqId;
         $filePersonal->filetype = 2; //filetype = 2 for personal picture
         $personalPhoto = $request->personalPic;
@@ -303,14 +309,14 @@ class GuestReqController extends Controller
         $filePersonal->file = 'personalImages/' . $newPersPhoto;
 
         if (($passportInfo->save()) && ($filePassport->save()) && ($filePersonal->save())) {
-            Alert::success('Success','Your Passport Infos added Successfully');
+            Alert::success('Success', 'Your Passport Infos added Successfully');
             if ($request->withcompanion == 0) {
                 return redirect()->route('guestreqs.accommodationInfo', ['guestReqId' => $guestReqId]);
             } else {
                 return redirect()->route('guestreqs.companionInfo', ['guestReqId' => $guestReqId]);
             }
         } else {
-            Alert::error('Error','Problem While Saving, Please Try Again');
+            Alert::error('Error', 'Problem While Saving, Please Try Again');
             return redirect()->back();
         }
     }
@@ -323,7 +329,9 @@ class GuestReqController extends Controller
 
     public function addAccommodationInfo(Request $request, $guestReqId)
     {
-        $accommodationInfo = new AccommodationInfo();
+        $accommodationInfo = AccommodationInfo::where('guest_req_id', $guestReqId)->where('type', '=', 1)->first();
+        if ($accommodationInfo == null)
+            $accommodationInfo = new AccommodationInfo();
         $accommodationInfo->guest_req_id = $guestReqId;
         $accommodationInfo->type = 1; // type=1 for Eligible Night
         $accommodationInfo->checkin = $request->checkin;
@@ -331,7 +339,9 @@ class GuestReqController extends Controller
         $accommodationInfo->roomtype = $request->roomtype;
 
         if ($request->checkinExtra) {
-            $accommodationExtra = new AccommodationInfo();
+            $accommodationExtra = AccommodationInfo::where('guest_req_id', $guestReqId)->where('type', '=', 2)->first();
+            if ($accommodationExtra == null)
+                $accommodationExtra = new AccommodationInfo();
             $accommodationExtra->guest_req_id = $guestReqId;
             $accommodationExtra->type = 2; // type=2 for Extra Night
             $accommodationExtra->checkin = $request->checkinExtra;
@@ -339,18 +349,18 @@ class GuestReqController extends Controller
             $accommodationExtra->roomtype = $request->roomtypeExtra;
 
             if (($accommodationInfo->save()) && ($accommodationExtra->save())) {
-                Alert::success('Success','Your Accommodation Infos added Successfully');
+                Alert::success('Success', 'Your Accommodation Infos added Successfully');
                 return redirect()->route('finalGuest');
             } else {
-                Alert::error('Error','Problem While Saving, Please Try Again');
+                Alert::error('Error', 'Problem While Saving, Please Try Again');
                 return redirect()->back();
             }
         } else {
             if ($accommodationInfo->save()) {
-                Alert::success('Success','Your Accommodation Infos added Successfully');
+                Alert::success('Success', 'Your Accommodation Infos added Successfully');
                 return redirect()->route('finalGuest');
             } else {
-                Alert::error('Error','Problem While Saving, Please Try Again');
+                Alert::error('Error', 'Problem While Saving, Please Try Again');
                 return redirect()->back();
             }
         }
@@ -365,8 +375,9 @@ class GuestReqController extends Controller
 
     public function addCompanionInfo(Request $request, $guestReqId)
     {
-
-        $companionInfo = new CompanionInfo();
+        $companionInfo = CompanionInfo::where('guest_req_id', $guestReqId)->first();
+        if ($companionInfo == null)
+            $companionInfo = new CompanionInfo();
         $companionInfo->guest_req_id = $guestReqId;
         $companionInfo->firstname = $request->firstname;
         $companionInfo->lastname = $request->lastname;
@@ -385,7 +396,9 @@ class GuestReqController extends Controller
         $companionInfo->visa_status = $request->visa_status;
 
         //For Companion Passport Picture
-        $filePassport = new FileInfo();
+        $filePassport = FileInfo::where('guest_req_id', $guestReqId)->where('filetype', '=', 3)->first();
+        if ($filePassport == null)
+            $filePassport = new FileInfo();
         $filePassport->guest_req_id = $guestReqId;
         $filePassport->filetype = 3; //filetype = 3 for companion passport picture
         $passportPhoto = $request->passportPic;
@@ -394,7 +407,9 @@ class GuestReqController extends Controller
         $filePassport->file = 'passportImages/' . $newPassPhoto;
 
         //For Companion Personal Picture
-        $filePersonal = new FileInfo();
+        $filePersonal = FileInfo::where('guest_req_id', $guestReqId)->where('filetype', '=', 4)->first();
+        if ($filePersonal == null)
+            $filePersonal = new FileInfo();
         $filePersonal->guest_req_id = $guestReqId;
         $filePersonal->filetype = 4; //filetype = 4 for companion personal picture
         $personalPhoto = $request->personalPic;
@@ -403,10 +418,10 @@ class GuestReqController extends Controller
         $filePersonal->file = 'personalImages/' . $newPersPhoto;
 
         if (($companionInfo->save()) && ($filePassport->save()) && ($filePersonal->save())) {
-            Alert::success('Success','Companion Infos added Successfully');
+            Alert::success('Success', 'Companion Infos added Successfully');
             return redirect()->route('guestreqs.accommodationInfo', ['guestReqId' => $guestReqId]);
         } else {
-            Alert::error('Error','Problem While Saving, Please Try Again');
+            Alert::error('Error', 'Problem While Saving, Please Try Again');
             return redirect()->back();
         }
     }
